@@ -1,19 +1,18 @@
 package org.example.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Person")
 public class Person {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//   If need to use existing sequence (if the database doesn't support incrementing)
-//
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceName_for_java")
-//    @SequenceGenerator(name = "sequenceName_for_java", sequenceName = "sequenceName_in_db", allocationSize = 1)
-    private  int id;
+    private int id;
 
     @Column(name = "name")
     private String name;
@@ -21,16 +20,29 @@ public class Person {
     @Column(name = "age")
     private int age;
 
-    public Person() {
-    }
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
+//    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+//            org.hibernate.annotations.CascadeType.REMOVE})//Если используется метод save вместо persist
+    private List<Item> itemList;
 
     public Person(String name, int age) {
         this.name = name;
         this.age = age;
     }
 
+    public Person() {
+    }
+
     public int getId() {
         return id;
+    }
+
+    public List<Item> getItemList() {
+        return itemList;
+    }
+
+    public void setItemList(List<Item> itemList) {
+        this.itemList = itemList;
     }
 
     public void setId(int id) {
@@ -52,6 +64,16 @@ public class Person {
     public void setAge(int age) {
         this.age = age;
     }
+
+    public void addItem(Item item){
+        if( this.itemList == null){
+            this.itemList =  new ArrayList<>();
+        }
+        item.setOwner(this);
+        this.itemList.add(item);
+    }
+
+
 
     @Override
     public String toString() {
