@@ -1,16 +1,18 @@
 package org.example;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import org.example.model.Person;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 
-/**
- * Hello world!
- *
- */
-public class App 
+import java.util.List;
+
+
+public class App
 {
     public static void main(String[] args) {
         Configuration configuration = new Configuration().addAnnotatedClass(Person.class);
@@ -21,18 +23,17 @@ public class App
         try {
             session.beginTransaction();
 
-            Person person1 = new Person("test1", 20);
-            session.persist(person1);
-            System.out.println(person1.getId());
+            List<Person> people = session.createQuery("FROM Person WHERE name LIKE 'T%'", Person.class).getResultList();
+            for (Person person: people
+            ) {
+                System.out.println(person.toString());
+            }
 
-            Person person = session.get(Person.class, 1);
-            System.out.println(person.toString());
 
-            Person person2 = session.get(Person.class, 1);
-            person2.setName("New name");
+            session.createQuery("update Person set name='Test' where age>20",null)
+                    .executeUpdate();
 
-            Person person3 = session.get(Person.class, 1);
-            session.remove(person3);
+            session.createQuery("delete from Person where age>20", null).executeUpdate();
 
             session.getTransaction().commit();
         } finally {
