@@ -20,6 +20,8 @@ public class Person {
     @Column(name = "age")
     private int age;
 
+    @OneToOne(mappedBy = "person", cascade = CascadeType.PERSIST)
+    private Passport passport;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
 //    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
 //            org.hibernate.annotations.CascadeType.REMOVE})//Если используется метод save вместо persist
@@ -63,6 +65,15 @@ public class Person {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Passport getPassport() {
+        return passport;
+    }
+
+    public void setPassport(Passport passport) {
+        this.passport = passport;
+        passport.setPerson(this);
     }
 
     public void addItem(Item item){
