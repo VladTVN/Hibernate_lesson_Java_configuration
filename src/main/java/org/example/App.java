@@ -4,6 +4,7 @@ import org.example.model.Item;
 import org.example.model.Movie;
 import org.example.model.Passport;
 import org.example.model.Person;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -53,9 +54,27 @@ public class App {
             actor.getMovieList().remove(movieToRemove);
             movieToRemove.getPersonList().remove(actor);
 
+//            ЛЕНИВАЯ ИНИЦИАЛИЗАЦИЯ
+            Person person3 = session.get(Person.class, 1);
+//            Hibernate.initialize(person3.getItemList());// чтобы подгрузить связанные сущности
+
             session.getTransaction().commit();
+
+            loadPersonsItems(sessionFactory, person3);
         }
 
 
+    }
+
+    private static void loadPersonsItems(SessionFactory sessionFactory, Person person3) {
+        Session session;
+        session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        person3 = (Person) session.merge(person3); //Если используется hql, то данный код не нужен
+        Hibernate.initialize(person3.getItemList());
+//            List<Item> itemList = session.createQuery("select i from Item i where i.owner.id=:personId", Item.class)  //ВТОРОЙ ВАРИАНТ ЗАГРУЗКИ ТОВАРОВ
+//                    .setParameter("personId", person3.getId()).getResultList();
+
+        session.getTransaction().commit();
     }
 }

@@ -22,12 +22,12 @@ public class Person {
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.PERSIST)
     private Passport passport;
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 //    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
 //            org.hibernate.annotations.CascadeType.REMOVE})//Если используется метод save вместо persist
     private List<Item> itemList;
 
-    @ManyToMany(mappedBy = "personList")
+    @ManyToMany(mappedBy = "personList", fetch = FetchType.LAZY)
     private List<Movie> movieList;
 
     public Person(String name, int age,  List<Movie> movieList) {

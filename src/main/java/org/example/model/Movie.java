@@ -19,7 +19,7 @@ public class Movie {
     @Column(name = "year_of_production")
     private int yearOfProduction;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "Actor_Movie",
             joinColumns = @JoinColumn( name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
